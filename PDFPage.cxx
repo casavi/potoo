@@ -105,6 +105,6 @@ int PDFPage::get_page() const {
     return _page;
 }
 
-const Magick::Image& PDFPage::get_image_representation() {
+const Magick::Image &PDFPage::get_image_representation() {
     return _image;
 }

@@ -28,7 +28,7 @@ public:
 
     void process();
 
-    const Magick::Image& get_image_representation();
+    const Magick::Image &get_image_representation();
 
     const ResultList &get_results() const;
 

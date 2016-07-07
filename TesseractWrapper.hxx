@@ -12,9 +12,9 @@
 class TesseractWrapper {
 
 public:
-    TesseractWrapper(const std::string& language);
+    TesseractWrapper(const std::string &language);
 
-    tesseract::TessBaseAPI* operator->();
+    tesseract::TessBaseAPI *operator->();
 
 private:
     using TesseractAPIPtr = deleted_unique_ptr<tesseract::TessBaseAPI>;

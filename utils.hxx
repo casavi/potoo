@@ -18,5 +18,4 @@ namespace std {
 }
 
 
-
 #endif //CONVERTER_UTILS_HXX

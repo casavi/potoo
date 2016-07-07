@@ -27,5 +27,4 @@ private:
 };
 
 
-
 #endif //CONVERTER_PDF_HXX

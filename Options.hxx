@@ -31,19 +31,18 @@ struct Options {
         float h;
     };
 
-    Options(const std::string &inputPDF, const std::string &outputFile, int dpi, bool parallel_processing,
-                std::string _language)
+    Options(const std::string &inputPDF, int dpi, bool parallel_processing,
+            std::string _language)
         : _inputPDF(inputPDF),
-          _outputFile(outputFile),
           _dpi(dpi),
-          _parallel_processing(parallel_processing), _language(_language) {}
+          _parallel_processing(parallel_processing),
+          _language(_language) {}
 
     void addCrop(Crop crop) {
         _crops.push_back(crop);
     }
 
     std::string _inputPDF;
-    std::string _outputFile;
     std::string _language;
     std::vector<Crop> _crops;
     int _dpi;

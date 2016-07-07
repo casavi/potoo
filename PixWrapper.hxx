@@ -11,11 +11,12 @@
 
 class PixWrapper {
 public:
-    PixWrapper(Pix* pix);
+    PixWrapper(Pix *pix);
 
-    Pix* operator->();
+    Pix *operator->();
 
-    Pix* get();
+    Pix *get();
+
 private:
     using PixPtr = deleted_unique_ptr<Pix>;
 

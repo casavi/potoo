@@ -13,17 +13,19 @@ Contact us: <hello@casavi.de>
 # ./converter --help
 
 Allowed options:
-  --help                   produce help message
-  -c [ --config ] path     path to configuration file
-  -h [ --human ]           <optional> print in human readable format
-  -f [ --first_page ] path <optional> only convert the first page to the 
-                           specified path, overrides normal behaviour
+  --help			        produce this help message
+
+  -c [--config] path		path to config json file (Required)
+
+And ONE of the following:
+  -f [--first_page] path	render the first page of the pdf as PNG into <path>
+  -h [--human] 				process everything and print to stdout, mainly for debugging
+  -o [--output] path		process everything and save it as json at <path>
 ```
 
 ### Config file syntax
 Valid JSON file in the following format:
 - inputPDF: String, absolute/relative path to input file
-- outputFile: String, absolute/relative path to the json-file for outputting the results. Doesn't get touched if -h (--human) is specified
 - dpi: Int, the DPI to render the PDF with (in PPI)
 - language: String, [Tesseract language name](https://github.com/tesseract-ocr/tessdata) - install your wanted packages
 - parallel_processing: Bool, if multiple paged pdfs should be processed in parallel or not. Optional, default is single threaded
@@ -45,7 +47,6 @@ If everything went right you should get your text.
 ```json
 {
   "inputPDF": "/tmp/potoo_example.pdf",
-  "outputFile": "/tmp/potoo_example_output.json",
   "dpi": 250,
   "language": "eng",
   "parallel_processing": true,
@@ -65,7 +66,7 @@ If everything went right you should get your text.
 
 ##### Execution:
 ```sh
-# potoo -c /tmp/potoo_example.json
+# potoo -c /tmp/potoo_example.json -o /tmp/potoo_example_output.json
 ```
 
 ##### Output:

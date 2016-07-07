@@ -19,7 +19,7 @@ struct PopplerPage : public boost::noncopyable {
 public:
     PopplerPage(poppler::page *page);
 
-    PopplerPage(PopplerPage&& other);
+    PopplerPage(PopplerPage &&other);
 
     poppler::image render(int dpi) const;
 
@@ -34,7 +34,7 @@ struct PopplerDocument {
 public:
     PopplerDocument(const std::string &input_pdf);
 
-    PopplerDocument(PopplerDocument&& other);
+    PopplerDocument(PopplerDocument &&other);
 
     size_t page_count();
 
