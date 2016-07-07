@@ -15,10 +15,14 @@
 
 #include <boost/core/noncopyable.hpp>
 
+/**
+ * Simple wrapper calss for poppler::page
+ */
 struct PopplerPage : public boost::noncopyable {
 public:
     PopplerPage(poppler::page *page);
 
+    // Lok at PixWrapper(PixWrapper&&)
     PopplerPage(PopplerPage &&other);
 
     poppler::image render(int dpi) const;
@@ -30,10 +34,14 @@ private:
     std::unique_ptr<poppler::page_renderer> _renderer;
 };
 
+/**
+ * Simple wrapper calss for poppler::document
+ */
 struct PopplerDocument {
 public:
     PopplerDocument(const std::string &input_pdf);
 
+    // Lok at PixWrapper(PixWrapper&&)
     PopplerDocument(PopplerDocument &&other);
 
     size_t page_count();

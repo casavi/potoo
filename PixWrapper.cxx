@@ -7,7 +7,11 @@
 void pixDeleter(Pix *);
 
 PixWrapper::PixWrapper(Pix *pix)
-    : pix_ptr(pix, pixDeleter) {
+    : _pix_ptr(pix, pixDeleter) {
+
+}
+
+PixWrapper::PixWrapper(PixWrapper &&other) : _pix_ptr(std::move(other._pix_ptr)) {
 
 }
 
@@ -16,7 +20,7 @@ Pix *PixWrapper::operator->() {
 }
 
 Pix *PixWrapper::get() {
-    return pix_ptr.get();
+    return _pix_ptr.get();
 }
 
 void pixDeleter(Pix *pix) {

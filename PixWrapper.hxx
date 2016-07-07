@@ -6,12 +6,19 @@
 #define CONVERTER_PIXWRAPPER_HXX
 
 #include <leptonica/allheaders.h>
+#include <boost/core/noncopyable.hpp>
 
 #include "utils.hxx"
 
-class PixWrapper {
+/**
+ * Simple wrapper class for leptonica Pix
+ */
+class PixWrapper : boost::noncopyable{
 public:
     PixWrapper(Pix *pix);
+
+    // We have to define it ourselves here to enable && construction
+    PixWrapper(PixWrapper&& other);
 
     Pix *operator->();
 
@@ -20,7 +27,7 @@ public:
 private:
     using PixPtr = deleted_unique_ptr<Pix>;
 
-    PixPtr pix_ptr;
+    PixPtr _pix_ptr;
 };
 
 

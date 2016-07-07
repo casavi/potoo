@@ -9,6 +9,9 @@
 
 #include "utils.hxx"
 
+/**
+ * Simple wrapper class for tesseract api
+ */
 class TesseractWrapper {
 
 public:

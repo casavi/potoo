@@ -8,6 +8,9 @@
 #include <chrono>
 #include <iostream>
 
+/**
+ * Crude timer class to enable easy benchmarking (text only for now)
+ */
 class Timer {
 public:
     Timer(const std::string &name);
@@ -21,8 +24,5 @@ private:
     std::chrono::high_resolution_clock::time_point start;
     bool timed;
 };
-
-#define TIME_START(name) { Timer t(name)
-#define TIME_END t.time(); }
 
 #endif //CONVERTER_TIMER_HXX

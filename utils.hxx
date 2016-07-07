@@ -7,15 +7,10 @@
 
 #include <memory>
 
+// May get deleted in the future, depending on future needs.
+
 template<typename T>
 using deleted_unique_ptr = std::unique_ptr<T, std::function<void(T *)>>;
-
-namespace std {
-    template<typename T, typename ...Args>
-    std::unique_ptr<T> make_unique(Args &&...args) {
-        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-    }
-}
 
 
 #endif //CONVERTER_UTILS_HXX

@@ -25,6 +25,8 @@ boost::property_tree::ptree PDF::work() {
     // Allocate in one big block to improve performance
     _pdf_pages.resize(_document.page_count());
 
+    // The main runner, extracted to avoid having it two times. Can work singlethreaded or multithreaded, requires no
+    // locking and has no race conditions.
     const auto runner = [&](int page_number) {
         auto &pdf_page = _pdf_pages[page_number];
         pdf_page.set_opts(_opts);
@@ -40,26 +42,45 @@ boost::property_tree::ptree PDF::work() {
         std::for_each(page_numbers.begin(), page_numbers.end(), runner);
     }
 
+    // Constructs the result object (json).
+
+    // Root of the PT
     ptree::ptree pt;
+
+    // The main results array
     ptree::ptree obj;
 
+    // For each page
     for (auto &pdf_page : _pdf_pages) {
+        // One page
         ptree::ptree pt_page;
+
+        // The region results
         ptree::ptree pt_results;
 
+        // Put the page number into pt_page
         pt_page.put("page", pdf_page.get_page());
+
+        // For each of the regions
         for (auto &r : pdf_page.get_results()) {
 
             ptree::ptree res;
+            // Put the type and value into the single region
             res.put("type", r.first);
             res.put("value", r.second);
+
+            // Add the region to the results
             pt_results.push_back({"", res});
 
         }
 
+        // Add the results to the page object
         pt_page.add_child("results", pt_results);
+
+        // Add the main object to our result array
         obj.push_back({"", pt_page});
     }
+
     pt.add_child("results", obj);
 
     return pt;
