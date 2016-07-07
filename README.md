@@ -100,3 +100,4 @@ If everything went right you should get your text.
 - Extend README
 - Add better error handling and/or logging
 - Search for bottlenecks
+- Add tests!
