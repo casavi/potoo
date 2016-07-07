@@ -88,6 +88,7 @@ If everything went right you should get your text.
 ```
 
 ### How to build
+- Needs at least GCC 4.8 (C++11)
 - Install all dependencies
     - Ubuntu 16.04: `sudo apt-get update && sudo apt-get install cmake libboost-all-dev graphicsmagick libgraphicsmagick++1-dev libpoppler-cpp-dev libtbb-dev libtesseract-dev libleptonica-dev`
 - Clone the repository: `git clone && cd `
@@ -95,3 +96,7 @@ If everything went right you should get your text.
 - Make: `cd build && make -j4 && sudo make install`
 - `potoo --help` should print the help text seen at [Parameters](#parameters)
         
+### Todo
+- Extend README
+- Add better error handling and/or logging
+- Search for bottlenecks
