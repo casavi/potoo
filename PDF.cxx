@@ -1,6 +1,3 @@
-//
-// Created by markus on 30/06/16.
-//
 
 #include "PDF.hxx"
 
@@ -17,25 +14,32 @@ PDF::PDF(const std::shared_ptr<Options> &options) : _opts(options), _document{_o
 
 boost::property_tree::ptree PDF::work() {
 
+    if (_opts->_end > _document.page_count()) {
+        throw std::runtime_error("the end parameter can't be bigger than the page count");
+    }
+
+    int start = _opts->_start == -1 ? 0 : _opts->_start;
+    int end = _opts->_end == -1 ? 0 : static_cast<int>(_document.page_count()) - _opts->_end;
+
     // Generate an array of page numbers for easy iteration
-    std::vector<int> page_numbers(_document.page_count());
+    std::vector<int> page_numbers(_document.page_count() - start - end);
     // Fills page_numbers with all numbers between 0 and d->pages()
-    std::iota(page_numbers.begin(), page_numbers.end(), 0);
+    std::iota(page_numbers.begin(), page_numbers.end(), start);
 
     // Allocate in one big block to improve performance
-    _pdf_pages.resize(_document.page_count());
+    _pdf_pages.resize(page_numbers.size());
 
     // The main runner, extracted to avoid having it two times. Can work singlethreaded or multithreaded, requires no
     // locking and has no race conditions.
     const auto runner = [&](int page_number) {
-        auto &pdf_page = _pdf_pages[page_number];
+        auto &pdf_page = _pdf_pages[page_number - start];
         pdf_page.set_opts(_opts);
         pdf_page.set_page_number(page_number);
         pdf_page.put_page(_document.get_page(page_number));
         pdf_page.process();
     };
 
-    // Processes each page (parallelly if USE_SINGLETHREAD_PROCESSING is not defined)
+    // Processes each page
     if (_opts->_parallel_processing) {
         tbb::parallel_for_each(page_numbers.begin(), page_numbers.end(), runner);
     } else {

@@ -14,7 +14,8 @@ struct GenericCommand {
 };
 
 struct HumanCommand : public GenericCommand {
-
+    int _start;
+    int _end;
 };
 
 struct FirstPageCommand : public GenericCommand {
@@ -23,6 +24,8 @@ struct FirstPageCommand : public GenericCommand {
 
 struct OutputCommand : public GenericCommand {
     std::string _path;
+    int _start;
+    int _end;
 };
 
 using Command = boost::variant<HumanCommand, FirstPageCommand, OutputCommand>;

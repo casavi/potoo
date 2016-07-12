@@ -1,6 +1,3 @@
-//
-// Created by markus on 30/06/16.
-//
 
 #include "PDFPage.hxx"
 

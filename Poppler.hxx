@@ -20,9 +20,9 @@
  */
 struct PopplerPage : public boost::noncopyable {
 public:
-    PopplerPage(poppler::page *page);
+    explicit PopplerPage(poppler::page *page);
 
-    // Lok at PixWrapper(PixWrapper&&)
+    // Look at PixWrapper(PixWrapper&&)
     PopplerPage(PopplerPage &&other);
 
     poppler::image render(int dpi) const;

@@ -1,12 +1,9 @@
-//
-// Created by markus on 30/06/16.
-//
 
 #include "Poppler.hxx"
 
 using namespace poppler;
 
-PopplerPage::PopplerPage(page *page) : _page(page), _renderer(std::unique_ptr<page_renderer>()) {}
+PopplerPage::PopplerPage(page *page) : _page(page), _renderer(std::unique_ptr<page_renderer>(new page_renderer())) {}
 
 image PopplerPage::render(int dpi) const {
     return image(_renderer->render_page(_page.get(), dpi, dpi));

@@ -33,10 +33,9 @@ struct Options {
 
     Options(const std::string &inputPDF, int dpi, bool parallel_processing,
             std::string _language)
-        : _inputPDF(inputPDF),
-          _dpi(dpi),
+        : _inputPDF(inputPDF), _dpi(dpi),
           _parallel_processing(parallel_processing),
-          _language(_language) {}
+          _language(_language), _start(-1), _end(-1) {}
 
     void addCrop(Crop crop) {
         _crops.push_back(crop);
@@ -47,6 +46,8 @@ struct Options {
     std::vector<Crop> _crops;
     int _dpi;
     bool _parallel_processing;
+    int _start;
+    int _end;
 };
 
 #endif //CONVERTER_OPTIONS_HXX

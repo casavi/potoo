@@ -1,6 +1,3 @@
-//
-// Created by markus on 29/06/16.
-//
 
 #include "PixWrapper.hxx"
 
