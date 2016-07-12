@@ -1,5 +1,4 @@
 
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/optional.hpp>
@@ -83,22 +82,31 @@ int main(int argc, const char **argv) {
         }
 
         // Subcommand handling below
-        if (command.type() == typeid(FirstPageCommand)) { // first_page subcommand handling
+        if (command.type() == typeid(PageCommand)) { // first_page subcommand handling
+            auto c = boost::get<PageCommand>(command);
             PDF main_pdf(opts);
-            auto page = main_pdf.get_page(0);
+
+            if(c._page && c._page.get() >= main_pdf.page_count())
+            {
+                throw std::runtime_error("page cannot be bigger than the document's page count");
+            }
+
+            auto page = main_pdf.get_page(c._page ? c._page.get() : 0);
             auto img = page.get_image_representation();
-            img.write(boost::get<FirstPageCommand>(command)._path);
+            img.write(c._path);
         } else {
 
             if (command.type() == typeid(HumanCommand)) {
                 auto c = boost::get<HumanCommand>(command);
                 opts->_start = c._start;
                 opts->_end = c._end;
+                opts->_page = c._page;
             }
             if (command.type() == typeid(OutputCommand)) {
                 auto c = boost::get<OutputCommand>(command);
                 opts->_start = c._start;
                 opts->_end = c._end;
+                opts->_page = c._page;
             }
 
             PDF main_pdf(opts);

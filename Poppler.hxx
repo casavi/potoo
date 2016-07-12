@@ -44,9 +44,9 @@ public:
     // Lok at PixWrapper(PixWrapper&&)
     PopplerDocument(PopplerDocument &&other);
 
-    size_t page_count();
+    size_t page_count() const;
 
-    PopplerPage get_page(int page_number);
+    PopplerPage get_page(int page_number) const;
 
 private:
     std::unique_ptr<poppler::document> _document;

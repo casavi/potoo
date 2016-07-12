@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 
+#include <boost/optional.hpp>
+
 /**
  * Helper struct for all options included in the supplied config file.
  */
@@ -46,8 +48,9 @@ struct Options {
     std::vector<Crop> _crops;
     int _dpi;
     bool _parallel_processing;
-    int _start;
-    int _end;
+    boost::optional<int> _start;
+    boost::optional<int> _end;
+    boost::optional<int> _page;
 };
 
 #endif //CONVERTER_OPTIONS_HXX

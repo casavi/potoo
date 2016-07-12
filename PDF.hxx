@@ -31,7 +31,9 @@ public:
      * @param page_number 0-based page index.
      * @return The rendered PDFPage.
      */
-    PDFPage get_page(int page_number);
+    PDFPage get_page(int page_number) const;
+
+    size_t page_count() const;
 
 private:
     std::vector<PDFPage> _pdf_pages;

@@ -20,11 +20,11 @@ PopplerDocument::PopplerDocument(const std::string &input_pdf) {
     }
 }
 
-size_t PopplerDocument::page_count() {
+size_t PopplerDocument::page_count() const {
     return static_cast<size_t>(_document->pages());
 }
 
-PopplerPage PopplerDocument::get_page(int page_number) {
+PopplerPage PopplerDocument::get_page(int page_number) const {
     return PopplerPage(_document->create_page(page_number));
 }
 

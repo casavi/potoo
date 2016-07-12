@@ -8,9 +8,9 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
     using namespace boost::program_options;
 
     // The command line variables
-    std::string config, first_page, output;
+    std::string config, single_page, output;
     bool human;
-    int start, end;
+    int start = -1, end = -1, page = -1;
 
     // All available options
     options_description desc("Allowed options");
@@ -18,11 +18,11 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
         ("help", "produce help message")
         ("config,c", value<std::string>(&config))
         ("human,h", bool_switch(&human)->default_value(false))
-        ("first_page,f", value<std::string>(&first_page))
+        ("single_page,S", value<std::string>(&single_page))
         ("output,o", value<std::string>(&output))
-        ("start,s", value<int>(&start)->default_value(-1))
-        ("end,e", value<int>(&end)->default_value(-1))
-        ;
+        ("start,s", value<int>(&start))
+        ("end,e", value<int>(&end))
+        ("page,p", value<int>(&page));
 
     static const std::string description = "Allowed options:\n"
         "  --help\t\t\tproduce this help message\n"
@@ -30,13 +30,15 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
         "  -c [--config] path\t\tpath to config json file (Required)\n"
         "\n"
         "And ONE of the following:\n"
-        "  -f [--first_page] path\trender the first page of the pdf as PNG into <path>\n"
+        "  -f [--single_page] path\trender the nth page (--page) of the pdf as PNG into <path>\n"
         "  -h [--human] \t\t\tprocess everything and print to stdout, mainly for debugging\n"
         "  -o [--output] path\t\tprocess everything and save it as json at <path>\n"
         "Additional options:\n"
-        "  -s [--start] start\t\tThe page on which to start (0-based)\n"
-        "  -e [--end] end\t\tThe last page to process (0-based)\n"
-    ;
+        "  Range options:\n"
+        "    -s [--start] start\t\tThe page on which to start (0-based). 0 if not specified\n"
+        "    -e [--end] end\t\tThe last page to process (0-based). <page-count> if not specified\n"
+        "  Position options:\n"
+        "    -p [--page] page\t\tOnly work on a single page\n";
 
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -55,33 +57,56 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
     }
 
     // config is set, but output and human are not
-    if (!config.empty() && !(!output.empty() || human || !first_page.empty())) {
+    if (!config.empty() && !(!output.empty() || human || !single_page.empty())) {
         throw std::runtime_error(
-            "please either specify an output file, the human flag or the first_page parameter\n\n" + description);
+            "please either specify an output file, the human flag or the single_page parameter\n\n" + description
+        );
     }
 
-    if ((start != -1 && end != -1 && start >= end) || start < -1 || start < -1) {
-        throw std::runtime_error("invalid start or end range");
+    if (
+        vm.count("start") && start <= -1
+        || vm.count("end") && end <= -1
+        || vm.count("page") && page <= -1
+        ) {
+        throw std::runtime_error("invalid start or end range or page");
     }
 
-    if (!first_page.empty()) { // first_page parameter was supplied, so we just save the image
-        FirstPageCommand fp;
+    const static auto integer_to_optional = [](int param) -> boost::optional<int> {
+        if (param == -1) return boost::none;
+        else return boost::make_optional(param);
+    };
+
+    if (!single_page.empty()) { // single_page parameter was supplied, so we just save the image
+
+        if (vm.count("start") || vm.count("end")) {
+            throw std::runtime_error("start and end are invalid parameters for single_page");
+        }
+
+        PageCommand fp;
         fp._config = config;
-        fp._path = vm["first_page"].as<std::string>();
+        fp._path = vm["single_page"].as<std::string>();
+        fp._page = integer_to_optional(page);
         return boost::make_optional(Command(fp));
-    } else { // first_page parameter was not supplied, run the main routine
+    } else { // single_page parameter was not supplied, run the main routine
+
+        if ((vm.count("start") || vm.count("end")) && vm.count("page")) {
+            throw std::runtime_error("start and/or end and page cannot be used at the same time");
+        }
+
         if (human) { // We want to print for humans, so let's config that
             HumanCommand hc;
             hc._config = config;
-            hc._start = start;
-            hc._end = end;
+            hc._start = integer_to_optional(start);
+            hc._end = integer_to_optional(end);
+            hc._page = integer_to_optional(page);
             return boost::make_optional(Command(hc));
         } else { // Return the path for saving
             OutputCommand oc;
             oc._config = config;
             oc._path = vm["output"].as<std::string>();
-            oc._start = start;
-            oc._end = end;
+            oc._start = integer_to_optional(start);
+            oc._end = integer_to_optional(end);
+            oc._page = integer_to_optional(page);
             return boost::make_optional(Command(oc));
         }
     }
