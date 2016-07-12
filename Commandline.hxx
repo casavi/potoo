@@ -13,7 +13,11 @@ struct GenericCommand {
     std::string _config;
 };
 
-struct PositionalCommand: public GenericCommand {
+struct InfoCommand : GenericCommand {
+    std::string _path;
+};
+
+struct PositionalCommand : public GenericCommand {
     boost::optional<int> _page;
 };
 
@@ -33,7 +37,7 @@ struct OutputCommand : public StartEndCommand {
     std::string _path;
 };
 
-using Command = boost::variant<HumanCommand, PageCommand, OutputCommand>;
+using Command = boost::variant<HumanCommand, PageCommand, OutputCommand, InfoCommand>;
 
 /**
  * The main parse function, takes the commandline parameters and returns them parsed.

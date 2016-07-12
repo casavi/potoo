@@ -14,7 +14,7 @@ int main(int argc, const char **argv) {
 
         Magick::InitializeMagick(NULL);
 
-        boost::optional<Command> command_opt;
+        boost::optional <Command> command_opt;
         try {
             // Parse all command line arguments
             command_opt = parse_options(argc, argv);
@@ -39,7 +39,7 @@ int main(int argc, const char **argv) {
         }
 
         // try to fill our Options object with all provided options
-        std::shared_ptr<Options> opts;
+        std::shared_ptr <Options> opts;
         try {
             opts = std::make_shared<Options>(
                 pt.get<std::string>("inputPDF"),
@@ -86,15 +86,28 @@ int main(int argc, const char **argv) {
             auto c = boost::get<PageCommand>(command);
             PDF main_pdf(opts);
 
-            if(c._page && c._page.get() >= main_pdf.page_count())
-            {
+            if (c._page && c._page.get() >= main_pdf.page_count()) {
                 throw std::runtime_error("page cannot be bigger than the document's page count");
             }
 
             auto page = main_pdf.get_page(c._page ? c._page.get() : 0);
             auto img = page.get_image_representation();
             img.write(c._path);
-        } else {
+        } else if (command.type() == typeid(InfoCommand)) {
+
+            auto c = boost::get<InfoCommand>(command);
+
+            PDF main_pdf(opts);
+
+            // Root of the PT
+            ptree::ptree pt;
+            pt.put("pages", main_pdf.page_count());
+
+            std::stringstream ofs;
+            ptree::write_json(ofs, pt);
+            std::cout << ofs.str() << std::endl;
+        }
+        else {
 
             if (command.type() == typeid(HumanCommand)) {
                 auto c = boost::get<HumanCommand>(command);
