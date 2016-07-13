@@ -19,6 +19,7 @@ void PDFPage::set_opts(const std::shared_ptr<Options> &opts) {
 }
 
 void PDFPage::put_page(PopplerPage &&page) {
+    _page_number = page.page_number();
     _page.reset(new PopplerPage(std::move(page)));
 }
 
@@ -39,7 +40,7 @@ void PDFPage::process() {
         auto result_utf8 = _page->text(r);
         std::string text;
 
-        if (result_utf8.size() && false) {
+        if (result_utf8.size()) {
             text.reserve(result_utf8.size());
             for(auto& c : result_utf8.to_utf8()){
                 text += c;
@@ -94,6 +95,8 @@ void PDFPage::process() {
     std::for_each(_opts->_crops.cbegin(), _opts->_crops.cend(), runner);
     //}
 
+    _image.reset(nullptr);
+    _page.reset(nullptr);
 }
 
 const PDFPage::ResultList &PDFPage::get_results() const {
@@ -101,7 +104,7 @@ const PDFPage::ResultList &PDFPage::get_results() const {
 }
 
 int PDFPage::get_page() const {
-    return _page->page_number();
+    return _page_number;
 }
 
 const std::unique_ptr<Magick::Image> &PDFPage::image_representation() {

@@ -53,6 +53,7 @@ public:
 
 private:
     ResultList _results;
+    int _page_number;
     std::shared_ptr<Options> _opts;
     std::unique_ptr<PopplerPage> _page;
     std::unique_ptr<Magick::Image> _image;
