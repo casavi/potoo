@@ -3,22 +3,22 @@
 
 Timer::Timer(const std::string &name)
     :
-    name(name),
-    start(std::chrono::high_resolution_clock::now()),
-    timed(false) {
+    _name(name),
+    _start(std::chrono::high_resolution_clock::now()),
+    _timed(false) {
 
 }
 
 Timer::~Timer() {
-    if (!timed)
+    if (!_timed)
         time();
 }
 
 void Timer::time() {
-    std::cout << name << ": "
+    std::cout << _name << ": "
               << std::chrono::duration_cast<std::chrono::milliseconds>(
-                  std::chrono::high_resolution_clock::now() - start
+                  std::chrono::high_resolution_clock::now() - _start
               ).count()
               << std::endl;
-    timed = true;
+    _timed = true;
 }

@@ -6,6 +6,7 @@
 #define POTOO_COMMANDLINE_HXX
 
 #include <boost/variant.hpp>
+#include <boost/variant/static_visitor.hpp>
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
 
@@ -42,8 +43,8 @@ using Command = boost::variant<HumanCommand, PageCommand, OutputCommand, InfoCom
 /**
  * The main parse function, takes the commandline parameters and returns them parsed.
  * Throws errors if any happen.
- * @param argc
- * @param argv
+ * @param argc Argc
+ * @param argv Argv
  * @return A boost optional of Command.
  */
 boost::optional<Command> parse_options(int argc, const char **argv);

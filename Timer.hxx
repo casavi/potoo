@@ -20,9 +20,9 @@ public:
     void time();
 
 private:
-    std::string name;
-    std::chrono::high_resolution_clock::time_point start;
-    bool timed;
+    bool _timed;
+    std::string _name;
+    std::chrono::high_resolution_clock::time_point _start;
 };
 
 #endif //CONVERTER_TIMER_HXX

@@ -20,15 +20,23 @@
  */
 struct PopplerPage : public boost::noncopyable {
 public:
-    explicit PopplerPage(poppler::page *page);
+    explicit PopplerPage(poppler::page *page, int _page_number);
 
     // Look at PixWrapper(PixWrapper&&)
     PopplerPage(PopplerPage &&other);
 
     poppler::image render(int dpi) const;
 
+    poppler::rectf size() const;
+
+    poppler::ustring text(const poppler::rectf& rect) const;
+
+    int page_number() const;
+
 private:
     std::unique_ptr<poppler::page> _page;
+
+    int _page_number;
 
     // Have to use a unique_ptr here to enable move construction
     std::unique_ptr<poppler::page_renderer> _renderer;

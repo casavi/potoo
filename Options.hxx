@@ -23,8 +23,8 @@ struct Options {
      * - h: height in percent
      */
     struct Crop {
-        Crop(const std::string &type, float x, float y, float w, float h)
-            : type(type), x(x), y(y), w(w), h(h) {}
+        Crop(const std::string &type_, float x_, float y_, float w_, float h_)
+            : type(type_), x(x_), y(y_), w(w_), h(h_) {}
 
         std::string type;
         float x;
@@ -34,20 +34,20 @@ struct Options {
     };
 
     Options(const std::string &inputPDF, int dpi, bool parallel_processing,
-            std::string _language)
+            std::string language)
         : _inputPDF(inputPDF), _dpi(dpi),
           _parallel_processing(parallel_processing),
-          _language(_language), _start(-1), _end(-1) {}
+          _language(language), _start(-1), _end(-1) {}
 
     void addCrop(Crop crop) {
         _crops.push_back(crop);
     }
 
-    std::string _inputPDF;
-    std::string _language;
     std::vector<Crop> _crops;
+    std::string _inputPDF;
     int _dpi;
     bool _parallel_processing;
+    std::string _language;
     boost::optional<int> _start;
     boost::optional<int> _end;
     boost::optional<int> _page;

@@ -66,9 +66,9 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
     }
 
     if (
-        vm.count("start") && start <= -1
-        || vm.count("end") && end <= -1
-        || vm.count("page") && page <= -1
+        (vm.count("start") && start <= -1)
+        || (vm.count("end") && end <= -1)
+        || (vm.count("page") && page <= -1)
         ) {
         throw std::runtime_error("invalid start or end range or page");
     }

@@ -1,20 +1,56 @@
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/optional.hpp>
-
 #include "Commandline.hxx"
 #include "exceptions.hxx"
 #include "Timer.hxx"
 #include "PDF.hxx"
 
+#include <boost/property_tree/json_parser.hpp>
+
+std::shared_ptr<Options> read_config(const std::string& path) {
+    namespace ptree = boost::property_tree;
+
+    // Read the
+    ptree::ptree pt;
+    try {
+        // Read the config file, use generic_visitor to return the _config member every command has
+        ptree::read_json(path, pt);
+    } catch (std::exception &e) {
+        throw invalid_config_exception(std::string("\tthe config file is malformed\n\tException: ") + e.what());
+    }
+
+    // try to fill our Options object with all provided options
+    std::shared_ptr<Options> opts;
+    try {
+        opts = std::make_shared<Options>(
+            pt.get<std::string>("inputPDF"),
+            pt.get<int>("dpi"),
+            pt.get_child_optional("parallel_processing") ? pt.get<bool>("parallel_processing") : false,
+            pt.get<std::string>("language")
+        );
+        for (const auto &crop : pt.get_child("crops")) {
+            opts->addCrop(Options::Crop{
+                crop.second.get<std::string>("type"),
+                crop.second.get<float>("dimensions.x"),
+                crop.second.get<float>("dimensions.y"),
+                crop.second.get<float>("dimensions.w"),
+                crop.second.get<float>("dimensions.h")
+            });
+        }
+    } catch (std::exception &e) {
+        throw invalid_config_exception(
+            std::string("\tthe json format does not meet the expectations\n\tException: ") + e.what());
+    }
+    return opts;
+}
+
 int main(int argc, const char **argv) {
+    Timer t("main_program");
     try {
         namespace ptree = boost::property_tree;
 
         Magick::InitializeMagick(NULL);
 
-        boost::optional <Command> command_opt;
+        boost::optional<Command> command_opt;
         try {
             // Parse all command line arguments
             command_opt = parse_options(argc, argv);
@@ -28,38 +64,8 @@ int main(int argc, const char **argv) {
             return 0;
         }
 
-        auto command = *command_opt;
-
-        // Read the
-        ptree::ptree pt;
-        try {
-            ptree::read_json(boost::apply_visitor(generic_visitor{}, command), pt);
-        } catch (std::exception &e) {
-            throw invalid_config_exception(std::string("\tthe config file is malformed\n\tException: ") + e.what());
-        }
-
-        // try to fill our Options object with all provided options
-        std::shared_ptr <Options> opts;
-        try {
-            opts = std::make_shared<Options>(
-                pt.get<std::string>("inputPDF"),
-                pt.get<int>("dpi"),
-                pt.get_child_optional("parallel_processing") ? pt.get<bool>("parallel_processing") : false,
-                pt.get<std::string>("language")
-            );
-            for (const auto &crop : pt.get_child("crops")) {
-                opts->addCrop(Options::Crop{
-                    crop.second.get<std::string>("type"),
-                    crop.second.get<float>("dimensions.x"),
-                    crop.second.get<float>("dimensions.y"),
-                    crop.second.get<float>("dimensions.w"),
-                    crop.second.get<float>("dimensions.h")
-                });
-            }
-        } catch (std::exception &e) {
-            throw invalid_config_exception(
-                std::string("\tthe json format does not meet the expectations\n\tException: ") + e.what());
-        }
+        const auto& command = *command_opt;
+        std::shared_ptr<Options> opts = read_config(boost::apply_visitor(generic_visitor{}, command));
 
         // check if the supplied crop types are unique
         {
@@ -86,13 +92,12 @@ int main(int argc, const char **argv) {
             auto c = boost::get<PageCommand>(command);
             PDF main_pdf(opts);
 
-            if (c._page && c._page.get() >= main_pdf.page_count()) {
+            if (c._page && c._page.get() >= static_cast<int>(main_pdf.page_count())) {
                 throw std::runtime_error("page cannot be bigger than the document's page count");
             }
 
-            auto page = main_pdf.get_page(c._page ? c._page.get() : 0);
-            auto img = page.get_image_representation();
-            img.write(c._path);
+            const auto &img = main_pdf.get_page(c._page ? c._page.get() : 0).image_representation();
+            img->write(c._path);
         } else if (command.type() == typeid(InfoCommand)) {
 
             auto c = boost::get<InfoCommand>(command);
@@ -152,9 +157,10 @@ int main(int argc, const char **argv) {
             }
         }
     } catch (std::exception &e) {
+        t.time();
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
+    t.time();
     return 0;
 }
-

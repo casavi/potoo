@@ -23,17 +23,15 @@ public:
 
     /**
      * Dependency-inject the program options.
-     * @param opts
+     * @param opts Options
      */
     void set_opts(const std::shared_ptr<Options> &opts);
 
-    void set_page_number(int page);
-
     /**
      * PDF puts one extracted page here. Converts the PopplerPage to a Magick++ Image.
-     * @param page
+     * @param page PopplerPage rvalue reference
      */
-    void put_page(const PopplerPage &page);
+    void put_page(PopplerPage &&page);
 
     /**
      * Does everything one page can do for every region on the page:
@@ -47,7 +45,7 @@ public:
      */
     void process();
 
-    const Magick::Image &get_image_representation();
+    const std::unique_ptr<Magick::Image>& image_representation();
 
     const ResultList &get_results() const;
 
@@ -55,9 +53,9 @@ public:
 
 private:
     ResultList _results;
-    Magick::Image _image;
     std::shared_ptr<Options> _opts;
-    int _page;
+    std::unique_ptr<PopplerPage> _page;
+    std::unique_ptr<Magick::Image> _image;
 };
 
 

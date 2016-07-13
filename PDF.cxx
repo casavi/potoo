@@ -7,6 +7,7 @@
 #include <boost/property_tree/json_parser.hpp>
 
 #include <numeric>
+#include <thread>
 
 namespace ptree = boost::property_tree;
 
@@ -15,8 +16,8 @@ PDF::PDF(const std::shared_ptr<Options> &options) : _opts(options), _document{_o
 boost::property_tree::ptree PDF::work() {
 
     // Test if end/start are there and bigger than page_count
-    if (_opts->_end && _opts->_end.get() > _document.page_count()
-        || _opts->_start && _opts->_start.get() > _document.page_count()) {
+    if ((_opts->_end && _opts->_end.get() > _document.page_count())
+        || (_opts->_start && _opts->_start.get() > _document.page_count())) {
         throw std::runtime_error("the start/end parameter can't be bigger than the page count");
     }
 
@@ -52,13 +53,12 @@ boost::property_tree::ptree PDF::work() {
     const auto runner = [&](int page_number) {
         auto &pdf_page = _pdf_pages[page_number - start];
         pdf_page.set_opts(_opts);
-        pdf_page.set_page_number(page_number);
         pdf_page.put_page(_document.get_page(page_number));
         pdf_page.process();
     };
 
     // Processes each page
-    if (_opts->_parallel_processing) {
+    if (_opts->_parallel_processing && page_numbers.size() > 2 && std::thread::hardware_concurrency() > 1) {
         tbb::parallel_for_each(page_numbers.begin(), page_numbers.end(), runner);
     } else {
         std::for_each(page_numbers.begin(), page_numbers.end(), runner);
@@ -111,7 +111,6 @@ boost::property_tree::ptree PDF::work() {
 PDFPage PDF::get_page(int page_number) const {
     PDFPage pdf_page;
     pdf_page.set_opts(_opts);
-    pdf_page.set_page_number(page_number);
     pdf_page.put_page(_document.get_page(page_number));
     return pdf_page;
 }
