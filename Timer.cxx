@@ -16,9 +16,6 @@ Timer::~Timer() {
 
 void Timer::time() {
     std::cout << _name << ": "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(
-                  std::chrono::high_resolution_clock::now() - _start
-              ).count()
+              << duration<std::chrono::milliseconds>().count()
               << std::endl;
-    _timed = true;
 }

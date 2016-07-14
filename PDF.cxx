@@ -50,18 +50,22 @@ boost::property_tree::ptree PDF::work() {
 
     // The main runner, extracted to avoid having it two times. Can work singlethreaded or multithreaded, requires no
     // locking and has no race conditions.
-    const auto runner = [&](int page_number) {
-        auto &pdf_page = _pdf_pages[page_number - start];
-        pdf_page.set_opts(_opts);
-        pdf_page.put_page(_document.get_page(page_number));
+    const auto runner = [](PDFPage& pdf_page) {
         pdf_page.process();
     };
 
+    // prepare all pages
+    for(auto page_number : page_numbers){
+        auto &pdf_page = _pdf_pages[page_number - start];
+        pdf_page.set_opts(_opts);
+        pdf_page.put_page(_document.get_page(page_number));
+    }
+
     // Processes each page
     if (_opts->_parallel_processing && page_numbers.size() > 2 && std::thread::hardware_concurrency() > 1) {
-        tbb::parallel_for_each(page_numbers.begin(), page_numbers.end(), runner);
+        tbb::parallel_for_each(_pdf_pages.begin(), _pdf_pages.end(), runner);
     } else {
-        std::for_each(page_numbers.begin(), page_numbers.end(), runner);
+        std::for_each(_pdf_pages.begin(), _pdf_pages.end(), runner);
     }
 
     // Constructs the result object (json).

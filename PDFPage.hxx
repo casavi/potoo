@@ -57,6 +57,7 @@ private:
     std::shared_ptr<Options> _opts;
     std::unique_ptr<PopplerPage> _page;
     std::unique_ptr<Magick::Image> _image;
+    poppler::rectf _page_rect;
 };
 
 

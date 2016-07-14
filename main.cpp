@@ -6,7 +6,7 @@
 
 #include <boost/property_tree/json_parser.hpp>
 
-std::shared_ptr<Options> read_config(const std::string& path) {
+std::shared_ptr<Options> read_config(const std::string &path) {
     namespace ptree = boost::property_tree;
 
     // Read the
@@ -64,7 +64,7 @@ int main(int argc, const char **argv) {
             return 0;
         }
 
-        const auto& command = *command_opt;
+        const auto &command = *command_opt;
         std::shared_ptr<Options> opts = read_config(boost::apply_visitor(generic_visitor{}, command));
 
         // check if the supplied crop types are unique
@@ -161,6 +161,7 @@ int main(int argc, const char **argv) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
+
     t.time();
     return 0;
 }

@@ -19,6 +19,12 @@ public:
 
     void time();
 
+    template<typename T>
+    T duration(bool resolved = true){
+        _timed = resolved;
+        return std::chrono::duration_cast<T>(std::chrono::high_resolution_clock::now() - _start);
+    }
+
 private:
     bool _timed;
     std::string _name;
