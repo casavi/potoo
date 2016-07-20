@@ -10,17 +10,35 @@ Contact us: <hello@casavi.de>
 
 ### Parameters
 ```sh
-# ./converter --help
+# ./potoo --help
+Usage:
+potoo -c <config-file> <output-command: -S|-h|-o|-i> [<range-options>]
 
 Allowed options:
-  --help			        produce this help message
-
-  -c [--config] path		path to config json file (Required)
+  --help                        produce this help message
+  -c [--config] path            path to config json file (Required)
 
 And ONE of the following:
-  -f [--first_page] path	render the first page of the pdf as PNG into <path>
-  -h [--human] 				process everything and print to stdout, mainly for debugging
-  -o [--output] path		process everything and save it as json at <path>
+  -S [--single_page] path       render the nth page (--page) of the pdf as PNG into <path>
+  -h [--human]                  process everything and print to stdout, mainly for debugging
+  -o [--output] path            process everything and save it as json at <path>
+  -i [--info] page              provide information about the pdf file and save it at <path>
+Additional options:
+  Range options:
+    -s [--start] start          The page on which to start (0-based). 0 if not specified
+    -e [--end] end              The last page to process (0-based). <page-count> if not specified
+  Position options:
+    -p [--page] page            Only work on a single page
+
+Examples:
+  Render the first page into first_page.png
+    potoo -c file.json -S first_page.png -p 0
+  Extract text from the first 3 pages and display it in human readable form
+    potoo -c file.json -h -e 3
+  Extract text from the 9th page (0-based) and display it in human readable form
+    potoo -c file.json -h -p 8
+  Get the page count of a pdf and save it into pagecount.json
+    potoo -c file.json -i pagecount.json
 ```
 
 ### Config file syntax
@@ -37,9 +55,9 @@ Valid JSON file in the following format:
     - h: Float, percentage height of the region
 
 ### Hints for Usage
-Use the --first_page parameter to get the first page as picture exactly as the tool would if it's run normally.  
+Use the --single_page parameter to get the first page as picture exactly as the tool would if it's run normally.  
 Then calculate your region(s) based off this picture and run it with --human for testing.  
-If everything went right you should get your text.  
+If everything went right you should get your text and you can use it via automation.
 
 ### Example Usage and Output
 [Example PDF](http://solutions.weblite.ca/pdfocrx/scansmpl.pdf)  
@@ -99,5 +117,4 @@ If everything went right you should get your text.
 ### Todo
 - Extend README
 - Add better error handling and/or logging
-- Search for bottlenecks
 - Add tests!
