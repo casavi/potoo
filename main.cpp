@@ -27,14 +27,16 @@ std::shared_ptr<Options> read_config(const std::string &path) {
             pt.get_child_optional("parallel_processing") ? pt.get<bool>("parallel_processing") : false,
             pt.get<std::string>("language")
         );
-        for (const auto &crop : pt.get_child("crops")) {
-            opts->addCrop(Options::Crop{
-                crop.second.get<std::string>("type"),
-                crop.second.get<float>("dimensions.x"),
-                crop.second.get<float>("dimensions.y"),
-                crop.second.get<float>("dimensions.w"),
-                crop.second.get<float>("dimensions.h")
-            });
+        if (auto crops = pt.get_child_optional("crops")) {
+            for (const auto &crop : crops.get()) {
+                opts->addCrop(Options::Crop{
+                    crop.second.get<std::string>("type"),
+                    crop.second.get<float>("dimensions.x"),
+                    crop.second.get<float>("dimensions.y"),
+                    crop.second.get<float>("dimensions.w"),
+                    crop.second.get<float>("dimensions.h")
+                });
+            }
         }
     } catch (std::exception &e) {
         throw invalid_config_exception(
@@ -113,6 +115,10 @@ int main(int argc, const char **argv) {
             std::cout << ofs.str() << std::endl;
         }
         else {
+
+            if(opts->_crops.empty()){
+                throw std::runtime_error("no crop regions specified");
+            }
 
             if (command.type() == typeid(HumanCommand)) {
                 auto c = boost::get<HumanCommand>(command);
