@@ -31,7 +31,7 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
         "  -c [--config] path\t\tpath to config json file (Required)\n"
         "\n"
         "And ONE of the following:\n"
-        "  -f [--single_page] path\trender the nth page (--page) of the pdf as PNG into <path>\n"
+        "  -S [--single_page] path\trender the nth page (--page) of the pdf as PNG into <path>\n"
         "  -h [--human] \t\t\tprocess everything and print to stdout, mainly for debugging\n"
         "  -o [--output] path\t\tprocess everything and save it as json at <path>\n"
         "  -i [--info] page\t\t\tprovide information about the pdf file and save it at <path>\n"

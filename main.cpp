@@ -98,7 +98,8 @@ int main(int argc, const char **argv) {
                 throw std::runtime_error("page cannot be bigger than the document's page count");
             }
 
-            const auto &img = main_pdf.get_page(c._page ? c._page.get() : 0).image_representation();
+            auto page = main_pdf.get_page(c._page ? c._page.get() : 0);
+            const auto &img = page.image_representation();
             img->write(c._path);
         } else if (command.type() == typeid(InfoCommand)) {
 
