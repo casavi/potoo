@@ -46,7 +46,7 @@ std::shared_ptr<Options> read_config(const std::string &path) {
 }
 
 int main(int argc, const char **argv) {
-    Timer t("main_program");
+    //Timer t("main_program");
     try {
         namespace ptree = boost::property_tree;
 
@@ -164,11 +164,11 @@ int main(int argc, const char **argv) {
             }
         }
     } catch (std::exception &e) {
-        t.time();
+        //t.time();
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 
-    t.time();
+    //t.time();
     return 0;
 }
