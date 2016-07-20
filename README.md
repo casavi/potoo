@@ -47,7 +47,7 @@ Valid JSON file in the following format:
 - dpi: Int, the DPI to render the PDF with (in PPI)
 - language: String, [Tesseract language name](https://github.com/tesseract-ocr/tessdata) - install your wanted packages
 - parallel_processing: Bool, if multiple paged pdfs should be processed in parallel or not. Optional, default is single threaded
-- crops: Array, multiple regions PER PAGE to OCR
+- crops: Array, multiple regions PER PAGE to OCR. Optional (only if it is not needed!), may be empty or not present at all.
     - type: String, unique name to identify this region later
     - x: Float, percentage distance from the left of the page
     - y: Float, percentage distance from the top
