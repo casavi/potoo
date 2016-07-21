@@ -11,7 +11,7 @@ std::shared_ptr<Options> read_config(const std::string &path) {
     // Read the
     ptree::ptree pt;
     try {
-        // Read the config file, use generic_visitor to return the _config member every command has
+        // Read the config file, use config_visitor to return the _config member every command has
         ptree::read_json(path, pt);
     } catch (std::exception &e) {
         throw invalid_config_exception(std::string("\tthe config file is malformed\n\tException: ") + e.what());

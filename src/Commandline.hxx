@@ -56,7 +56,7 @@ Command parse_options(int argc, const char **argv);
 /**
  * Helper class to always return the config member independently of the type.
  */
-class generic_visitor : public boost::static_visitor<std::string> {
+class config_visitor : public boost::static_visitor<std::string> {
 public:
     template<typename T>
     std::string operator()(const T &thing) const {

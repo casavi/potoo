@@ -28,7 +28,7 @@ int main(int argc, const char **argv) {
             return 0;
         }
 
-        std::shared_ptr<Options> opts = read_config(boost::apply_visitor(generic_visitor{}, command));
+        std::shared_ptr<Options> opts = read_config(boost::apply_visitor(config_visitor{}, command));
 
         // Subcommand handling below
         if (command.type() == typeid(PageCommand)) { // first_page subcommand handling
