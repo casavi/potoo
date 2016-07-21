@@ -1,12 +1,10 @@
-//
-// Created by markus on 30/06/16.
-//
 
 #ifndef CONVERTER_OPTIONS_HXX
 #define CONVERTER_OPTIONS_HXX
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <boost/optional.hpp>
 
@@ -52,5 +50,8 @@ struct Options {
     boost::optional<int> _end;
     boost::optional<int> _page;
 };
+
+
+std::shared_ptr<Options> read_config(const std::string &path);
 
 #endif //CONVERTER_OPTIONS_HXX
