@@ -142,3 +142,7 @@ const std::unique_ptr<Magick::Image> &PDFPage::image_representation() {
     }
     return _image;
 }
+
+void PDFPage::set_text_hinting() {
+    _page->set_text_hinting();
+}

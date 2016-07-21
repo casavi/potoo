@@ -33,6 +33,8 @@ public:
 
     int page_number() const;
 
+    void set_text_hinting();
+
 private:
     std::unique_ptr<poppler::page> _page;
 

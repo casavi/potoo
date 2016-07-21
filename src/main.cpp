@@ -40,6 +40,7 @@ int main(int argc, const char **argv) {
             }
 
             auto page = main_pdf.get_page(c._page ? c._page.get() : 0);
+            page.set_text_hinting();
             const auto &img = page.image_representation();
             img->write(c._path);
         } else if (command.type() == typeid(InfoCommand)) {

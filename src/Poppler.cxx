@@ -25,6 +25,10 @@ int PopplerPage::page_number() const {
     return _page_number;
 }
 
+void PopplerPage::set_text_hinting() {
+    _renderer->set_render_hint(poppler::page_renderer::render_hint::text_antialiasing, true);
+}
+
 PopplerDocument::PopplerDocument(const std::string &input_pdf) {
     _document.reset(document::load_from_file(input_pdf));
     if (!_document) {

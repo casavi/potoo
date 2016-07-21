@@ -51,6 +51,8 @@ public:
 
     int get_page() const;
 
+    void set_text_hinting();
+
 private:
     ResultList _results;
     int _page_number;
