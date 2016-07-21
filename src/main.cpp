@@ -52,21 +52,20 @@ int main(int argc, const char **argv) {
 
         Magick::InitializeMagick(NULL);
 
-        boost::optional<Command> command_opt;
+        Command command;
         try {
             // Parse all command line arguments
-            command_opt = parse_options(argc, argv);
+            command = parse_options(argc, argv);
         } catch (std::exception &e) {
             std::cerr << e.what() << std::endl;
             return 1;
         }
 
-        // Exit with 0 if command_opt returned boost::none - indicates success, but no valid settings
-        if (!command_opt) {
+        if(command.type() == typeid(HumanCommand)){
+            // this is valid, just exit
             return 0;
         }
 
-        const auto &command = *command_opt;
         std::shared_ptr<Options> opts = read_config(boost::apply_visitor(generic_visitor{}, command));
 
         // check if the supplied crop types are unique

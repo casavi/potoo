@@ -4,7 +4,7 @@
 #include <boost/program_options.hpp>
 #include <iostream>
 
-boost::optional<Command> parse_options(int argc, const char **argv) {
+Command parse_options(int argc, const char **argv) {
     using namespace boost::program_options;
 
     // The command line variables
@@ -62,7 +62,7 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
     // Only print help text if --help or -h is specified
     if (vm.count("help") || argc == 1) {
         std::cout << description << std::endl;
-        return boost::none;
+        return HumanCommand{};
     }
 
     // We need a valid config, so we exit if there is none
@@ -101,7 +101,7 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
         fp._config = config;
         fp._path = single_page;
         fp._page = integer_to_optional(page);
-        return boost::make_optional(Command(fp));
+        return fp;
     } else if (info) {
         if (output.empty()) {
             throw std::runtime_error("please specify the output file for the pdf information");
@@ -110,7 +110,7 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
         InfoCommand ic;
         ic._config = config;
         ic._path = output;
-        return boost::make_optional(Command(ic));
+        return ic;
     }
     else { // single_page parameter was not supplied, run the main routine
 
@@ -124,7 +124,7 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
             hc._start = integer_to_optional(start);
             hc._end = integer_to_optional(end);
             hc._page = integer_to_optional(page);
-            return boost::make_optional(Command(hc));
+            return hc;
         } else { // Return the path for saving
             OutputCommand oc;
             oc._config = config;
@@ -132,7 +132,7 @@ boost::optional<Command> parse_options(int argc, const char **argv) {
             oc._start = integer_to_optional(start);
             oc._end = integer_to_optional(end);
             oc._page = integer_to_optional(page);
-            return boost::make_optional(Command(oc));
+            return oc;
         }
     }
 }

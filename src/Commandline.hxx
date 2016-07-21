@@ -14,7 +14,11 @@ struct GenericCommand {
     std::string _config;
 };
 
-struct InfoCommand : GenericCommand {
+struct HelpCommand : public GenericCommand {
+    // This only inherits from GenericCommand to make the visitor work
+};
+
+struct InfoCommand : public GenericCommand {
     std::string _path;
 };
 
@@ -38,7 +42,7 @@ struct OutputCommand : public StartEndCommand {
     std::string _path;
 };
 
-using Command = boost::variant<HumanCommand, PageCommand, OutputCommand, InfoCommand>;
+using Command = boost::variant<HumanCommand, PageCommand, OutputCommand, InfoCommand, HelpCommand>;
 
 /**
  * The main parse function, takes the commandline parameters and returns them parsed.
@@ -47,7 +51,7 @@ using Command = boost::variant<HumanCommand, PageCommand, OutputCommand, InfoCom
  * @param argv Argv
  * @return A boost optional of Command.
  */
-boost::optional<Command> parse_options(int argc, const char **argv);
+Command parse_options(int argc, const char **argv);
 
 /**
  * Helper class to always return the config member independently of the type.
