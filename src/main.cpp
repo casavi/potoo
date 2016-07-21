@@ -61,7 +61,7 @@ int main(int argc, const char **argv) {
             return 1;
         }
 
-        if(command.type() == typeid(HumanCommand)){
+        if(command.type() == typeid(HelpCommand)){
             std::cout << potoo_description << std::endl;
             return 0;
         }

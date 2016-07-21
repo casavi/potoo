@@ -2,6 +2,7 @@
 #include "Commandline.hxx"
 
 #include <boost/program_options.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <iostream>
 
 Command parse_options(int argc, const char **argv) {
@@ -31,7 +32,7 @@ Command parse_options(int argc, const char **argv) {
 
     // Only print help text if --help or -h is specified
     if (vm.count("help") || argc == 1) {
-        return HumanCommand{};
+        return HelpCommand{};
     }
 
     // We need a valid config, so we exit if there is none
@@ -54,6 +55,10 @@ Command parse_options(int argc, const char **argv) {
         ) {
         throw std::runtime_error("invalid start or end range or page");
     }
+
+    boost::algorithm::trim(config);
+    boost::algorithm::trim(single_page);
+    boost::algorithm::trim(output);
 
     const static auto integer_to_optional = [](int param) -> boost::optional<int> {
         if (param == -1) return boost::none;
