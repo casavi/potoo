@@ -65,4 +65,35 @@ public:
 };
 
 
+static const std::string potoo_description = "Usage:\n"
+    "potoo -c <config-file> <output-command: -S|-h|-o|-i> [<range-options>]\n"
+    "\n"
+    "Allowed options:\n"
+    "  --help                        produce this help message\n"
+    "  -c [--config] path            path to config json file (Required)\n"
+    "\n"
+    "And ONE of the following:\n"
+    "  -S [--single_page] path       render the nth page (--page) of the pdf as PNG into <path>\n"
+    "  -h [--human]                  process everything and print to stdout, mainly for debugging\n"
+    "  -o [--output] path            process everything and save it as json at <path>\n"
+    "  -i [--info] page              provide information about the pdf file and save it at <path>\n"
+    "Additional options:\n"
+    "  Range options:\n"
+    "    -s [--start] start          The page on which to start (0-based). 0 if not specified\n"
+    "    -e [--end] end              The last page to process (0-based). <page-count> if not specified\n"
+    "  Position options:\n"
+    "    -p [--page] page            Only work on a single page\n"
+    "\n"
+    "Examples:\n"
+    "  Render the first page into first_page.png\n"
+    "    potoo -c file.json -S first_page.png -p 0\n"
+    "  Extract text from the first 3 pages and display it in human readable form\n"
+    "    potoo -c file.json -h -e 3\n"
+    "  Extract text from the 9th page (0-based) and display it in human readable form\n"
+    "    potoo -c file.json -h -p 8\n"
+    "  Get the page count of a pdf and save it into pagecount.json\n"
+    "    potoo -c file.json -i pagecount.json\n"
+    "\n";
+
+
 #endif //POTOO_COMMANDLINE_HXX

@@ -57,12 +57,12 @@ int main(int argc, const char **argv) {
             // Parse all command line arguments
             command = parse_options(argc, argv);
         } catch (std::exception &e) {
-            std::cerr << e.what() << std::endl;
+            std::cerr << e.what() << "\n\n" << potoo_description << std::endl;
             return 1;
         }
 
         if(command.type() == typeid(HumanCommand)){
-            // this is valid, just exit
+            std::cout << potoo_description << std::endl;
             return 0;
         }
 

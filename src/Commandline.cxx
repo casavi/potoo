@@ -25,56 +25,25 @@ Command parse_options(int argc, const char **argv) {
         ("page,p", value<int>(&page))
         ("info,i", bool_switch(&info)->default_value(false));
 
-    static const std::string description = "Usage:\n"
-        "potoo -c <config-file> <output-command: -S|-h|-o|-i> [<range-options>]\n"
-        "\n"
-        "Allowed options:\n"
-        "  --help                        produce this help message\n"
-        "  -c [--config] path            path to config json file (Required)\n"
-        "\n"
-        "And ONE of the following:\n"
-        "  -S [--single_page] path       render the nth page (--page) of the pdf as PNG into <path>\n"
-        "  -h [--human]                  process everything and print to stdout, mainly for debugging\n"
-        "  -o [--output] path            process everything and save it as json at <path>\n"
-        "  -i [--info] page              provide information about the pdf file and save it at <path>\n"
-        "Additional options:\n"
-        "  Range options:\n"
-        "    -s [--start] start          The page on which to start (0-based). 0 if not specified\n"
-        "    -e [--end] end              The last page to process (0-based). <page-count> if not specified\n"
-        "  Position options:\n"
-        "    -p [--page] page            Only work on a single page\n"
-        "\n"
-        "Examples:\n"
-        "  Render the first page into first_page.png\n"
-        "    potoo -c file.json -S first_page.png -p 0\n"
-        "  Extract text from the first 3 pages and display it in human readable form\n"
-        "    potoo -c file.json -h -e 3\n"
-        "  Extract text from the 9th page (0-based) and display it in human readable form\n"
-        "    potoo -c file.json -h -p 8\n"
-        "  Get the page count of a pdf and save it into pagecount.json\n"
-        "    potoo -c file.json -i pagecount.json\n"
-        "\n";
-
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
     notify(vm);
 
     // Only print help text if --help or -h is specified
     if (vm.count("help") || argc == 1) {
-        std::cout << description << std::endl;
         return HumanCommand{};
     }
 
     // We need a valid config, so we exit if there is none
     if (config.empty()) {
         throw std::runtime_error(
-            "no configuration file set\n\n" + description);
+            "no configuration file set\n\n" + potoo_description);
     }
 
     // config is set, but output and human are not
     if (!config.empty() && !(!output.empty() || human || !single_page.empty() || info)) {
         throw std::runtime_error(
-            "please either specify an output file, the human flag or the single_page parameter\n\n" + description
+            "please either specify an output file, the human flag or the single_page parameter"
         );
     }
 
