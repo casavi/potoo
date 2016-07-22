@@ -62,7 +62,7 @@ Valid JSON file in the following format:
 - -h [--human]: Performs the same things as -o but prints it in very simple human readable format. Mainly for testing.
 - -i [--info] <path>: Prints infos about the PDF into <path>, in JSON format. Format: ```{ "pages": "<count>" }```
 
-*\*can be adjusted by specifying either -s, -e or -p*
+> \* can be adjusted by specifying either -s, -e or -p
 
 ##### Modifiers
 - -s <start>: Page where to start
