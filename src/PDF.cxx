@@ -11,9 +11,8 @@
 
 namespace ptree = boost::property_tree;
 
-PDF::PDF(const std::shared_ptr<Options> &options) : _opts(options), _document{_opts->_inputPDF} {}
-
-boost::property_tree::ptree PDF::work() {
+PDF::PDF(const std::shared_ptr<Options> &options)
+    : _opts(options), _document{_opts->_inputPDF} {
 
     // Test if end/start are there and bigger than page_count
     if ((_opts->_end && _opts->_end.get() > _document.page_count())
@@ -41,34 +40,48 @@ boost::property_tree::ptree PDF::work() {
     }
 
     // Generate an array of page numbers for easy iteration
-    std::vector<int> page_numbers(_document.page_count() - start - end);
+    _pdf_page_numbers.resize(_document.page_count() - start - end);
     // Fills page_numbers with all numbers between 0 and d->pages()
-    std::iota(page_numbers.begin(), page_numbers.end(), start);
+    std::iota(_pdf_page_numbers.begin(), _pdf_page_numbers.end(), start);
 
     // Allocate in one big block to improve performance
-    _pdf_pages.resize(page_numbers.size());
+    _results.reserve(_pdf_page_numbers.size());
+}
+
+boost::property_tree::ptree PDF::work() {
 
     // The main runner, extracted to avoid having it two times. Can work singlethreaded or multithreaded, requires no
     // locking and has no race conditions.
-    const auto runner = [](PDFPage& pdf_page) {
-        pdf_page.process();
+    const auto runner = [&](int page_number) {
+        PDFPage page{_document.get_page(page_number)};
+        auto result = page.process(_opts->_language, _opts->_crops);
+
+        std::lock_guard<decltype(_mutex)> l(_mutex);
+        _results.emplace_back(std::make_pair(page_number, result));
     };
 
-    // prepare all pages
-    for(auto page_number : page_numbers){
-        auto &pdf_page = _pdf_pages[page_number - start];
-        pdf_page.set_opts(_opts);
-        pdf_page.put_page(_document.get_page(page_number));
-    }
-
     // Processes each page
-    if (_opts->_parallel_processing && page_numbers.size() > 2 && std::thread::hardware_concurrency() > 1) {
-        tbb::parallel_for_each(_pdf_pages.begin(), _pdf_pages.end(), runner);
+    if (_opts->_parallel_processing && _pdf_page_numbers.size() > 2 && std::thread::hardware_concurrency() > 1) {
+        tbb::parallel_for_each(_pdf_page_numbers.cbegin(), _pdf_page_numbers.cend(), runner);
     } else {
-        std::for_each(_pdf_pages.begin(), _pdf_pages.end(), runner);
+        std::for_each(_pdf_page_numbers.cbegin(), _pdf_page_numbers.cend(), runner);
     }
 
-    // Constructs the result object (json).
+    return results_as_ptree();
+}
+
+size_t PDF::page_count() const {
+    return _document.page_count();
+}
+
+void PDF::write_page(int page_number, const std::string &path) {
+    PDFPage page{_document.get_page(page_number)};
+    page._page.set_text_hinting();
+    auto img = page.image_representation(_opts->_dpi);
+    img.write(path);
+}
+
+boost::property_tree::ptree PDF::results_as_ptree() const {
 
     // Root of the PT
     ptree::ptree pt;
@@ -77,7 +90,7 @@ boost::property_tree::ptree PDF::work() {
     ptree::ptree obj;
 
     // For each page
-    for (auto &pdf_page : _pdf_pages) {
+    for (const auto &result : _results) {
         // One page
         ptree::ptree pt_page;
 
@@ -85,10 +98,10 @@ boost::property_tree::ptree PDF::work() {
         ptree::ptree pt_results;
 
         // Put the page number into pt_page
-        pt_page.put("page", pdf_page.get_page());
+        pt_page.put("page", result.first);
 
         // For each of the regions
-        for (auto &r : pdf_page.get_results()) {
+        for (auto &r : result.second) {
 
             ptree::ptree res;
             // Put the type and value into the single region
@@ -110,15 +123,4 @@ boost::property_tree::ptree PDF::work() {
     pt.add_child("results", obj);
 
     return pt;
-}
-
-PDFPage PDF::get_page(int page_number) const {
-    PDFPage pdf_page;
-    pdf_page.set_opts(_opts);
-    pdf_page.put_page(_document.get_page(page_number));
-    return pdf_page;
-}
-
-size_t PDF::page_count() const {
-    return _document.page_count();
 }

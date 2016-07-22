@@ -43,6 +43,9 @@ size_t PopplerDocument::page_count() const {
 }
 
 PopplerPage PopplerDocument::get_page(int page_number) const {
+    if(page_number >= _document->pages()){
+        throw std::runtime_error("this page does not exist in this document");
+    }
     return PopplerPage(_document->create_page(page_number), page_number);
 }
 

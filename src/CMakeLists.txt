@@ -39,7 +39,7 @@ include_directories(${POPPLER_INCLUDE_DIRS})
 
 link_directories(${MAGICK++_LIBRARY_DIR})
 
-set(SOURCE_FILES main.cpp TesseractWrapper.cxx PixWrapper.cxx Timer.cxx Poppler.cxx PDFPage.cxx PDF.cxx Commandline.cxx Options.cxx)
+set(SOURCE_FILES main.cxx TesseractWrapper.cxx PixWrapper.cxx Timer.cxx Poppler.cxx PDF.cxx Commandline.cxx Options.cxx PDFPage.cxx)
 add_executable(potoo ${SOURCE_FILES})
 
 target_link_libraries(potoo ${MAGICK++_LIBRARIES} ${Boost_LIBRARIES} ${TBB_LIBRARIES} ${Tesseract_LIBS} ${POPPLER_LIBRARIES})

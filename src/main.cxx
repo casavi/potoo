@@ -8,7 +8,6 @@
 #include <boost/property_tree/json_parser.hpp>
 
 int main(int argc, const char **argv) {
-    //Timer t("main_program");
     try {
         namespace ptree = boost::property_tree;
 
@@ -39,10 +38,7 @@ int main(int argc, const char **argv) {
                 throw std::runtime_error("page cannot be bigger than the document's page count");
             }
 
-            auto page = main_pdf.get_page(c._page ? c._page.get() : 0);
-            page.set_text_hinting();
-            const auto &img = page.image_representation();
-            img->write(c._path);
+            main_pdf.write_page(c._page.get_value_or(0), c._path);
         } else if (command.type() == typeid(InfoCommand)) {
 
             auto c = boost::get<InfoCommand>(command);
@@ -106,11 +102,9 @@ int main(int argc, const char **argv) {
             }
         }
     } catch (std::exception &e) {
-        //t.time();
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 
-    //t.time();
     return 0;
 }
