@@ -54,6 +54,22 @@ Valid JSON file in the following format:
     - w: Float, percentage width of the region
     - h: Float, percentage height of the region
 
+### Options
+##### Actions/Output
+- --help: Print usage and helpful information
+- -o [--output] <path>: Performs OCR or text extraction on all crop regions of all* pages of the PDF, saves all results in the file specified via <path>. 
+- -S [--single_page] <path>: Renders one page of the document into the specified PNG file. Requires the --page parameter to specify which page to render.
+- -h [--human]: Performs the same things as -o but prints it in very simple human readable format. Mainly for testing.
+- -i [--info] <path>: Prints infos about the PDF into <path>, in JSON format. Format: ```{ "pages": "<count>" }```
+
+*\* can be adjusted by specifying either -s, -e or -p*
+
+##### Modifiers
+- -s <start>: Page where to start
+- -e <end>: Page where to end (still included)
+- -p <page>: Only this specific page (mainly useful for --single_page)
+
+
 ### Hints for Usage
 Use the --single_page parameter to get the first page as picture exactly as the tool would if it's run normally.  
 Then calculate your region(s) based off this picture and run it with --human for testing.  
