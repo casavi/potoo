@@ -35,7 +35,7 @@ struct Options {
             std::string language)
         : _inputPDF(inputPDF), _dpi(dpi),
           _parallel_processing(parallel_processing),
-          _language(language), _start(-1), _end(-1) {}
+          _language(language) {}
 
     void addCrop(Crop crop) {
         _crops.push_back(crop);

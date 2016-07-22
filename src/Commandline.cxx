@@ -9,8 +9,8 @@ Command parse_options(int argc, const char **argv) {
     using namespace boost::program_options;
 
     // The command line variables
-    std::string config, single_page, output;
-    bool human, info;
+    std::string config, single_page, output, info;
+    bool human;
     int start = -1, end = -1, page = -1;
 
     // All available options
@@ -21,10 +21,10 @@ Command parse_options(int argc, const char **argv) {
         ("human,h", bool_switch(&human)->default_value(false))
         ("single_page,S", value<std::string>(&single_page))
         ("output,o", value<std::string>(&output))
+        ("info,i", value<std::string>(&info))
         ("start,s", value<int>(&start))
         ("end,e", value<int>(&end))
-        ("page,p", value<int>(&page))
-        ("info,i", bool_switch(&info)->default_value(false));
+        ("page,p", value<int>(&page));
 
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -42,9 +42,9 @@ Command parse_options(int argc, const char **argv) {
     }
 
     // config is set, but output and human are not
-    if (!config.empty() && !(!output.empty() || human || !single_page.empty() || info)) {
+    if (!config.empty() && !(!output.empty() || human || !single_page.empty() || !info.empty())) {
         throw std::runtime_error(
-            "please either specify an output file, the human flag or the single_page parameter"
+            "please either specify an output file, the human flag, the info or the single_page parameter"
         );
     }
 
@@ -76,14 +76,10 @@ Command parse_options(int argc, const char **argv) {
         fp._path = single_page;
         fp._page = integer_to_optional(page);
         return fp;
-    } else if (info) {
-        if (output.empty()) {
-            throw std::runtime_error("please specify the output file for the pdf information");
-        }
-
+    } else if (!info.empty()) {
         InfoCommand ic;
         ic._config = config;
-        ic._path = output;
+        ic._path = info;
         return ic;
     }
     else { // single_page parameter was not supplied, run the main routine

@@ -27,7 +27,7 @@ int main(int argc, const char **argv) {
             return 0;
         }
 
-        std::shared_ptr<Options> opts = read_config(boost::apply_visitor(config_visitor{}, command));
+        auto opts = read_config(boost::apply_visitor(config_visitor{}, command));
 
         // Subcommand handling below
         if (command.type() == typeid(PageCommand)) { // first_page subcommand handling
@@ -49,9 +49,7 @@ int main(int argc, const char **argv) {
             ptree::ptree pt;
             pt.put("pages", main_pdf.page_count());
 
-            std::stringstream ofs;
-            ptree::write_json(ofs, pt);
-            std::cout << ofs.str() << std::endl;
+            ptree::write_json(c._path, pt);
         }
         else {
 
