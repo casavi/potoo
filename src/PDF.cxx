@@ -11,7 +11,7 @@
 
 namespace ptree = boost::property_tree;
 
-PDF::PDF(const std::shared_ptr<Options> &options)
+PDF::PDF(std::shared_ptr<Options> options)
     : _opts(options), _document{_opts->_inputPDF} {
 
     // Test if end/start are there and bigger than page_count
@@ -54,7 +54,7 @@ boost::property_tree::ptree PDF::work() {
     // locking and has no race conditions.
     const auto runner = [&](int page_number) {
         PDFPage page{_document.get_page(page_number)};
-        auto result = page.process(_opts->_language, _opts->_crops);
+        auto result = page.process(_opts->_language, _opts->_crops, _opts->_dpi);
 
         std::lock_guard<decltype(_mutex)> l(_mutex);
         _results.emplace_back(std::make_pair(page_number, result));

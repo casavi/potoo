@@ -27,7 +27,7 @@ class PDF {
         /**
          * Performs OCR or text extraction on one page and returns the results
          */
-        ResultList process(const std::string &language, const std::vector<Options::Crop> &crops);
+        PDF::ResultList process(const std::string &language, const std::vector<Options::Crop> &crops, int dpi);
 
         Magick::Image image_representation(int dpi);
 
@@ -36,7 +36,7 @@ class PDF {
 
 public:
 
-    PDF(const std::shared_ptr<Options> &options);
+    PDF(std::shared_ptr<Options> options);
 
     /**
      * The main function, this does all the work and coordinates everything.

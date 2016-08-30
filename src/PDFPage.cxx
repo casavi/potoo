@@ -12,7 +12,8 @@ PDF::PDFPage::PDFPage(PopplerPage &&page) :
     _page(std::move(page)) {
 }
 
-PDF::ResultList PDF::PDFPage::process(const std::string &language, const std::vector<Options::Crop> &crops) {
+PDF::ResultList PDF::PDFPage::process(const std::string &language, const std::vector<Options::Crop> &crops, int dpi)
+{
     namespace gm = Magick;
 
     ResultList results;
@@ -46,7 +47,7 @@ PDF::ResultList PDF::PDFPage::process(const std::string &language, const std::ve
             }
         }
         else {
-            auto img = image_representation(0);
+            auto img = image_representation(dpi);
             gm::Blob b;
 
             const size_t width = img.size().width();
