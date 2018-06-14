@@ -24,7 +24,8 @@ std::shared_ptr<Options> read_config(const std::string &path) {
             pt.get<std::string>("inputPDF"),
             pt.get<int>("dpi"),
             pt.get_child_optional("parallel_processing") ? pt.get<bool>("parallel_processing") : false,
-            pt.get<std::string>("language")
+            pt.get<std::string>("language"),
+            pt.get_child_optional("force_ocr") ? pt.get<bool>("force_ocr") : false
         );
         if (auto crops = pt.get_child_optional("crops")) {
             for (const auto &crop : crops.get()) {

@@ -12,7 +12,7 @@ PDF::PDFPage::PDFPage(PopplerPage &&page) :
     _page(std::move(page)) {
 }
 
-PDF::ResultList PDF::PDFPage::process(const std::string &language, const std::vector<Options::Crop> &crops, int dpi)
+PDF::ResultList PDF::PDFPage::process(const std::string &language, const std::vector<Options::Crop> &crops, int dpi, bool force_ocr)
 {
     namespace gm = Magick;
 
@@ -29,24 +29,24 @@ PDF::ResultList PDF::PDFPage::process(const std::string &language, const std::ve
     const float height_factor = static_cast<float>(page_rect.height() / 100.f);
 
     auto runner = [&](const Options::Crop &crop) {
-
-        poppler::rectf r(std::floor(crop.x * width_factor),
+        std::string text("");
+        if (!force_ocr) {
+            poppler::rectf r(std::floor(crop.x * width_factor),
                          std::floor(crop.y * height_factor),
                          std::ceil(crop.w * width_factor),
                          std::ceil(crop.h * height_factor)
-        );
+            );
 
-        auto result_utf8 = _page.text(r);
+            auto result_utf8 = _page.text(r);
 
-        std::string text;
-
-        if (result_utf8.size()) {
-            text.reserve(result_utf8.size());
-            for (auto &c : result_utf8.to_utf8()) {
-                text += c;
+            if (result_utf8.size()) {
+                text.reserve(result_utf8.size());
+                for (auto &c : result_utf8.to_utf8()) {
+                    text += c;
+                }
             }
         }
-        else {
+        if (text.empty()) {
             auto img = image_representation(dpi);
             gm::Blob b;
 

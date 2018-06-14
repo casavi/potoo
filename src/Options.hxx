@@ -32,10 +32,11 @@ struct Options {
     };
 
     Options(const std::string &inputPDF, int dpi, bool parallel_processing,
-            std::string language)
+            std::string language, bool force_ocr)
         : _inputPDF(inputPDF), _dpi(dpi),
           _parallel_processing(parallel_processing),
-          _language(language) {}
+          _language(language),
+          _force_ocr(force_ocr) {}
 
     void addCrop(Crop crop) {
         _crops.push_back(crop);
@@ -46,6 +47,7 @@ struct Options {
     int _dpi;
     bool _parallel_processing;
     std::string _language;
+    bool _force_ocr;
     boost::optional<int> _start;
     boost::optional<int> _end;
     boost::optional<int> _page;

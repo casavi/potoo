@@ -54,7 +54,7 @@ boost::property_tree::ptree PDF::work() {
     // locking and has no race conditions.
     const auto runner = [&](int page_number) {
         PDFPage page{_document.get_page(page_number)};
-        auto result = page.process(_opts->_language, _opts->_crops, _opts->_dpi);
+        auto result = page.process(_opts->_language, _opts->_crops, _opts->_dpi, _opts->_force_ocr);
 
         std::lock_guard<decltype(_mutex)> l(_mutex);
         _results.emplace_back(std::make_pair(page_number, result));

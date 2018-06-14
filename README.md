@@ -47,6 +47,7 @@ Valid JSON file in the following format:
 - dpi: Int, the DPI to render the PDF with (in PPI)
 - language: String, [Tesseract language name](https://github.com/tesseract-ocr/tessdata) - install your wanted packages
 - parallel_processing: Bool, if multiple paged pdfs should be processed in parallel or not. Optional, default is single threaded
+- force_ocr: Bool, if you do not wish text extraction. By default the program first tries text extraction and uses OCR eventually if no text has been found. Optional, default is false
 - crops: Array, multiple regions PER PAGE to OCR. Optional (only if it is not needed!), may be empty or not present at all.
     - type: String, unique name to identify this region later
     - x: Float, percentage distance from the left of the page
@@ -84,6 +85,7 @@ If everything went right you should get your text and you can use it via automat
   "dpi": 250,
   "language": "eng",
   "parallel_processing": true,
+  "force_ocr": true,
   "crops": [
     {
       "type": "address",
