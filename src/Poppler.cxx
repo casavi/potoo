@@ -1,4 +1,5 @@
-
+#include <GlobalParams.h>
+#include <Error.h>
 #include "Poppler.hxx"
 
 using namespace poppler;
@@ -36,6 +37,10 @@ PopplerDocument::PopplerDocument(const std::string &input_pdf) {
     } else if (_document->is_locked()) {
         throw std::runtime_error("File is locked " + input_pdf);
     }
+
+    // Turn off error messages (no error sent to console).
+    globalParams->setErrQuiet(true);
+    setErrorCallback(nullptr, nullptr);
 }
 
 size_t PopplerDocument::page_count() const {
