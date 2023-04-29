@@ -6,6 +6,7 @@
 #define CONVERTER_UTILS_HXX
 
 #include <memory>
+#include <functional>
 
 // May get deleted in the future, depending on future needs.
 
