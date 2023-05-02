@@ -1,6 +1,7 @@
 #include <GlobalParams.h>
 #include <Error.h>
 #include "Poppler.hxx"
+#include <stdexcept>
 
 using namespace poppler;
 

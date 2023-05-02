@@ -1,5 +1,6 @@
 
 #include "TesseractWrapper.hxx"
+#include <stdexcept>
 
 void tesseractAPIDeleter(tesseract::TessBaseAPI *);
 
